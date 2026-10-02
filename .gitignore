@@ -1,3 +1,5 @@
 node_modules/
 diagnose-output/
 .env
+.dev.vars
+.wrangler/

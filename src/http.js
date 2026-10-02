@@ -24,6 +24,8 @@ export class CookieJar {
   }
   header() { return [...this.map].map(([k, v]) => `${k}=${v}`).join('; '); }
   get size() { return this.map.size; }
+  entries() { return [...this.map]; }
+  static from(entries) { const j = new CookieJar(); for (const [k, v] of entries) j.map.set(k, v); return j; }
 }
 
 function decode(buf, contentType = '') {

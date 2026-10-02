@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yphs-better-sources",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // 靜態檔(public/)由 Cloudflare 直接服務；只有 /api/* 會進 Worker
+  "assets": { "directory": "./public", "run_worker_first": ["/api/*"] }
+}

@@ -5,10 +5,18 @@
   "description": "YPHS 學校公告 + eClass 聚合器（本機執行）",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "wrangler dev",
     "diagnose": "node scripts/diagnose.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "deploy": "wrangler deploy"
   },
-  "engines": { "node": ">=20" },
-  "dependencies": { "cheerio": "^1.0.0" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.146.0"
+  }
 }

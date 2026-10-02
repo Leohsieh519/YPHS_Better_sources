@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { login, fetchEclass, getSession } from '../src/eclass.js';
+import { login, fetchEclass } from '../src/eclass.js';
 
 // 假 eClass：表單登入 → Set-Cookie → 帶 cookie 才看得到公告
 const srv = http.createServer((req, res) => {
@@ -33,9 +33,19 @@ test('eClass 表單登入 + 抓取（假站）', async (t) => {
   const cfg = { loginUrl: base + '/login', pages: [{ name: 'hw', url: base + '/home', selectors: null }] };
 
   await assert.rejects(login(cfg, 'leo', 'wrong'), /登入失敗/);
-  const token = await login(cfg, 'leo', 'secret');
-  const out = await fetchEclass(cfg, getSession(token));
+  const jar = await login(cfg, 'leo', 'secret');
+  const out = await fetchEclass(cfg, jar);
   assert.equal(out.errors.length, 0);
   assert.equal(out.items[0].title, '數學作業：第三章習題');
   assert.equal(out.items[0].url, base + '/a/1');
+});
+
+import { seal, unseal } from '../src/session.js';
+test('session 加密往返、錯誤金鑰與竄改都會失敗', async () => {
+  const secret = 'x'.repeat(32), jar = [['sid', 'abc'], ['b', 'c=d']];
+  const tok = await seal(secret, jar);
+  assert.deepEqual(await unseal(secret, tok), jar);
+  assert.equal(await unseal('y'.repeat(32), tok), null);
+  assert.equal(await unseal(secret, tok.slice(0, -2) + 'AA'), null);
+  assert.equal(await unseal(secret, 'garbage'), null);
 });

@@ -1,30 +1,7 @@
-// eClass：帳密只在記憶體裡的 session（cookie jar），不寫入磁碟、不寫 log。
+// eClass：登入後只回傳 CookieJar（由呼叫端加密存進使用者瀏覽器），帳密不保留、不寫 log。
 import * as cheerio from 'cheerio';
-import crypto from 'node:crypto';
 import { CookieJar, request } from './http.js';
 import { extractAnnouncements } from './extract.js';
-
-const sessions = new Map(); // token -> { jar, expires }
-const TTL_MS = 60 * 60 * 1000;
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [k, v] of sessions) if (v.expires < now) sessions.delete(k);
-}, 60_000).unref();
-
-export function getSession(token) {
-  const s = token && sessions.get(token);
-  if (!s || s.expires < Date.now()) return null;
-  s.expires = Date.now() + TTL_MS;
-  return s;
-}
-export function logout(token) { sessions.delete(token); }
-
-function newSession(jar) {
-  const token = crypto.randomBytes(24).toString('hex');
-  sessions.set(token, { jar, expires: Date.now() + TTL_MS });
-  return token;
-}
 
 /** 在登入頁找出帳號/密碼欄位並送出表單（通用做法，未必適用所有 eClass 版本）。 */
 export async function login(cfg, username, password) {
@@ -60,7 +37,7 @@ export async function login(cfg, username, password) {
 
   // 登入失敗的粗略判斷：回來的頁面還有密碼欄位
   if (cheerio.load(res.html)('input[type=password]').length) throw new Error('登入失敗：帳號或密碼錯誤？');
-  return newSession(jar);
+  return jar;
 }
 
 /** 貼上瀏覽器的 Cookie header（從 DevTools 複製），適用 AJAX/驗證碼等無法用表單登入的情況。 */
@@ -68,14 +45,14 @@ export function loginWithCookie(cookieStr) {
   const jar = new CookieJar();
   jar.setRaw(cookieStr);
   if (!jar.size) throw new Error('Cookie 格式不正確');
-  return newSession(jar);
+  return jar;
 }
 
-export async function fetchEclass(cfg, session) {
+export async function fetchEclass(cfg, jar) {
   const items = [], errors = [];
   await Promise.all(cfg.pages.map(async (p) => {
     try {
-      const res = await request(p.url, { jar: session.jar });
+      const res = await request(p.url, { jar });
       if (res.status >= 400) throw new Error('HTTP ' + res.status);
       if (cheerio.load(res.html)('input[type=password]').length) throw new Error('登入已過期，請重新登入');
       items.push(...extractAnnouncements(res.html, res.url, { source: p.name, selectors: p.selectors }));
