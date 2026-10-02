@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YPHS 公告匯整</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>YPHS 公告匯整</h1>
+  <input id="q" type="search" placeholder="搜尋標題…（按 / 快速聚焦）" autocomplete="off">
+  <button id="refresh" title="重新抓取">↻ 重新整理</button>
+  <button id="theme" title="切換深淺色">◐</button>
+</header>
+
+<main>
+  <nav class="tabs" id="tabs">
+    <button data-tab="all" class="on">全部</button>
+    <button data-tab="school">學校公告</button>
+    <button data-tab="eclass">eClass</button>
+    <button data-tab="pinned">★ 釘選</button>
+    <label class="chk"><input type="checkbox" id="unreadOnly"> 只看未讀</label>
+  </nav>
+
+  <section id="eclassLogin" class="login" hidden>
+    <h2>登入 eClass</h2>
+    <p class="muted">帳密只送到你本機的伺服器，存在記憶體裡的 session（1 小時），不會寫入檔案。</p>
+    <form id="loginForm">
+      <input name="username" placeholder="帳號" autocomplete="username">
+      <input name="password" type="password" placeholder="密碼" autocomplete="current-password">
+      <button>登入</button>
+    </form>
+    <details><summary>登入不了？改用 Cookie</summary>
+      <p class="muted">在瀏覽器登入 eClass → F12 → Network → 點任一請求 → 複製 Request Headers 的 <code>Cookie</code> 值貼在這裡。</p>
+      <form id="cookieForm"><input name="cookie" placeholder="a=1; b=2; ..."><button>用 Cookie 登入</button></form>
+    </details>
+    <p id="loginErr" class="err"></p>
+  </section>
+
+  <div id="status" class="muted"></div>
+  <ul id="list" class="list"></ul>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

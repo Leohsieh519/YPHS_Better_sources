@@ -1,0 +1,19 @@
+{
+  "port": 3000,
+  "cacheSeconds": 300,
+  "school": {
+    "baseUrl": "https://www.yphs.tp.edu.tw/",
+    "_comment": "pages 可以放多個「公告列表頁」。selectors 留空 = 用通用演算法自動抓；抓不準時填入 CSS selector 覆寫。",
+    "pages": [
+      { "name": "學校公告", "url": "https://www.yphs.tp.edu.tw/", "selectors": null }
+    ]
+  },
+  "eclass": {
+    "baseUrl": "https://yphs.eclass-apps.com/",
+    "loginUrl": "https://yphs.eclass-apps.com/templates/",
+    "_comment": "登入後要抓的頁面。不確定就先留 loginUrl，跑 npm run diagnose 之後再補。",
+    "pages": [
+      { "name": "eClass 首頁", "url": "https://yphs.eclass-apps.com/templates/", "selectors": null }
+    ]
+  }
+}

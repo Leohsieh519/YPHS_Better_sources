@@ -1,0 +1,14 @@
+{
+  "name": "yphs-better-sources",
+  "version": "0.1.0",
+  "private": true,
+  "description": "YPHS 學校公告 + eClass 聚合器（本機執行）",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "diagnose": "node scripts/diagnose.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "cheerio": "^1.0.0" }
+}
